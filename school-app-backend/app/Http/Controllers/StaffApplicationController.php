@@ -10,6 +10,15 @@ use App\Http\Requests\StaffApplicationRequest;
 
 class StaffApplicationController extends Controller
 {
+
+    protected $staff;
+
+    public function __construct(StaffApplication $staff)
+     {
+         $this->staff = $staff;
+     }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -17,12 +26,8 @@ class StaffApplicationController extends Controller
      */
     public function index()
     {
-        
-        $registered_staff = StaffApplication::get();
-        if($registered_staff){
-            return response()->json(['Application Received Successfuly', 200, $registered_staff ]);
 
-        }
+        return response()->json(['message' =>'Data retrieved Successfully', 'data' =>  $this->staff->all()], 200);
     }
 
     /**
@@ -32,7 +37,7 @@ class StaffApplicationController extends Controller
      */
     public function create(StaffApplicationRequest $request)
     {
-        $create_staff = StaffApplication::create([
+        $create_staff =  $this->staff::firstOrCreate([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
@@ -40,7 +45,7 @@ class StaffApplicationController extends Controller
             'role' => $request->role
         ]);
         if($create_staff){
-            return response()->json(['Application submitted Successfully', 201, $create_staff ]);
+            return response()->json(['message' => 'Application submitted Successfully', 'data' =>  $create_staff], 201);
         }
     }
 }

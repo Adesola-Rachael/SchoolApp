@@ -53,14 +53,14 @@
 </template>
 
 <script>
-import axios from 'redaxios';
+import axios from 'axios';
+
 
 export default {
     name: 'EnrolStudent',
     data() {
         return {
             student: {
-                id: '',
                 name: '',
                 grade: '',
                 address: '',
@@ -76,22 +76,34 @@ export default {
     methods: {
         handleFileUpload(event, field) {
             this.student[field] = event.target.files[0];
-            this.student[field] = event.target.files[0];
 
         },
         save() {
-           
+            if (!this.student.name || !this.student.grade || !this.student.address || !this.student.date_of_birth ||
+                !this.student.phone || !this.student.state || !this.student.nationality ||
+                !this.student.school_record || !this.student.birth_certificate) {
+                alert('All fields are required.');
+                return;
+            }
             this.saveData();
         },
         saveData() {
 
-            const formData = new FormData();
-            for (let key in this.student) {
+             const formData = new FormData();
+            for (const key in this.student) {
                 formData.append(key, this.student[key]);
             }
-            axios.post("http://127.0.0.1:8000/api/auth/enrol_student", formData, {
+
+             console.log("Payload:");
+    for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+    }
+
+            axios.post("http://127.0.0.1:8000/api/pages/enrol_student", formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+
+
                 }
             })
             .then(({ data }) => {
@@ -111,7 +123,6 @@ export default {
         },
         resetForm() {
             this.student = {
-                id: '',
                 name: '',
                 grade: '',
                 address: '',
